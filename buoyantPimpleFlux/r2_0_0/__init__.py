@@ -72,7 +72,7 @@ def createFields( runTime, mesh, g ):
                               mesh )
 
     # Force p_rgh to be consistent with p
-    p_rgh <<= p - rho*gh
+    p_rgh << p - rho*gh
 
     ref.ext_Info()<< "Creating field DpDt\n" << ref.nl
     
@@ -109,19 +109,18 @@ def fun_hEqn( thermo, rho, p, h, phi, turbulence, DpDt ):
 
 #---------------------------------------------------------------------------
 def fun_pEqn( mesh, runTime, pimple, thermo, rho, p, h, psi, U, phi, turbulence, gh, ghf, p_rgh, UEqn, DpDt, cumulativeContErr, corr ):
-    rho <<= thermo.rho()
+    rho << thermo.rho()
   
     # Thermodynamic density needs to be updated by psi*d(p) after the
     # pressure solution - done in 2 parts. Part 1:
-    tmp = thermo.rho()
-    tmp -= psi() * p_rgh()
+    thermo.rho() << thermo.rho() - psi() * p_rgh() # mixed calculations
   
     rAU = 1.0 / UEqn.A()
     rhorAUf = ref.surfaceScalarField( ref.word( "(rho*(1|A(U)))" ), ref.fvc.interpolate( rho * rAU ) )
   
-    U <<= rAU * UEqn.H()
+    U << rAU * UEqn.H()
 
-    phi <<= ref.fvc.interpolate( rho ) * ( ( ref.fvc.interpolate( U ) & mesh.Sf() ) + ref.fvc.ddtPhiCorr( rAU, rho, U, phi ) )
+    phi << ref.fvc.interpolate( rho ) * ( ( ref.fvc.interpolate( U ) & mesh.Sf() ) + ref.fvc.ddtPhiCorr( rAU, rho, U, phi ) )
 
     buoyancyPhi = -rhorAUf * ghf * ref.fvc.snGrad( rho ) * mesh.magSf()
   
@@ -147,13 +146,12 @@ def fun_pEqn( mesh, runTime, pimple, thermo, rho, p, h, psi, U, phi, turbulence,
             pass
         pass
     
-    p <<= p_rgh + rho*gh
+    p << p_rgh + rho*gh
 
     # Second part of thermodynamic density update
-    tmp = thermo.rho()
-    tmp += psi * p_rgh
+    thermo.rho() << thermo.rho() + psi() * p_rgh # mixed calculations
 
-    DpDt <<= ref.fvc.DDt( ref.surfaceScalarField( ref.word( "phiU" ), phi() / ref.fvc.interpolate( rho ) ), p ) # mixed calculations
+    DpDt << ref.fvc.DDt( ref.surfaceScalarField( ref.word( "phiU" ), phi() / ref.fvc.interpolate( rho ) ), p ) # mixed calculations
 
     ref.rhoEqn( rho, phi )
     cumulativeContErr = ref.compressibleContinuityErrs( rho(), thermo, cumulativeContErr ) #mixed calculations
@@ -221,7 +219,7 @@ def main_standalone( argc, argv ):
            
             pimple.increment()
             pass
-        rho <<= thermo.rho()
+        rho << thermo.rho()
 
         runTime.write()
 
