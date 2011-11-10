@@ -177,7 +177,7 @@ def main_standalone( argc, argv ):
   
     CoNum, meanCoNum = ref.compressibleCourantNo( mesh, phi, rho, runTime )
     
-    runTime = ref.setInitialDeltaT( runTime, adjustTimeStep, maxCo, maxDeltaT, CoNum )
+    runTime = ref.setInitialDeltaT( runTime, adjustTimeStep, maxCo, CoNum )
   
     pimple = man.pimpleControl( mesh ) 
 
