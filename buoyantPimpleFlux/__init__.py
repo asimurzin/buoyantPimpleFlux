@@ -39,6 +39,13 @@ if FOAM_REF_VERSION( ">=", "020000" ):
 
 
 #--------------------------------------------------------------------------------------
+from Foam import FOAM_REF_VERSION
+if FOAM_REF_VERSION( ">=", "020100" ):
+    from buoyantPimpleFlux.r2_1_0 import *
+    pass
+
+
+#--------------------------------------------------------------------------------------
 def entry_point():
     try:
        engine = main_standalone
