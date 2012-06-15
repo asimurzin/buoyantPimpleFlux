@@ -26,14 +26,14 @@
 
 #--------------------------------------------------------------------------------------
 from Foam import FOAM_REF_VERSION
-if FOAM_REF_VERSION( ">=", "010701" ):
+if FOAM_REF_VERSION( "==", "010701" ):
     from buoyantPimpleFlux.r1_7_1 import *
     pass
 
     
 #--------------------------------------------------------------------------------------
 from Foam import FOAM_REF_VERSION
-if FOAM_REF_VERSION( ">=", "020000" ):
+if FOAM_REF_VERSION( "==", "020000" ) or FOAM_REF_VERSION( "==", "020001" ):
     from buoyantPimpleFlux.r2_0_0 import *
     pass
 
